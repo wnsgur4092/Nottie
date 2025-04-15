@@ -4,7 +4,7 @@ import SwiftUI
 struct NottieApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            NottieListView()
         }
     }
 }
