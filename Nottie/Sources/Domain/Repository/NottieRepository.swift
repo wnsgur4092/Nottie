@@ -15,7 +15,7 @@ final class NottieRepository: NottieRepositoryProtocol {
         self.context = context
     }
     
-    
+
     func fetchAll() -> [Nottie] {
         let descriptor = FetchDescriptor<Nottie>(sortBy: [SortDescriptor(\.createdAt, order: .reverse)])
         return (try? context.fetch(descriptor)) ?? []
