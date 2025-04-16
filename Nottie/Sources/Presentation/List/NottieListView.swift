@@ -14,6 +14,8 @@ struct NottieListView: View {
         "4월 10일": ["파일 첨부해드렸어요. 확인해주세요!", "확인 완료했습니다.", "조금 늦을 것 같습니다.", "ㄹㅇㄹㅇㄹㄴㅇㄹㄴㅇㄹㄴㄹㄴㅇ", "ㄹㄴㄹㄹㅇㄴㄹㄴㅇㄹㅇㄴㄹㄴㄹ", "ㄴㅇㄹㅇㄴㄹㄴㄹㅈㄷㄹㅈㄷㄹㅈㄷㄹㅈ", "ㅂㅂㄱㅈㄱㅂㅈㄱㅂㄱㅂㅈㄱㅈㄱㅈ"]
     ]
     
+    @State private var isPresentingCreationView = false
+    
     
     private var sortedKeys : [String] {
         messagesByDate.keys.sorted(by: >)
@@ -42,7 +44,8 @@ struct NottieListView: View {
                 
                 //생성하기 버튼
                 Button {
-                    print("노티 생성 버튼 클릭됨")
+                    print("탭: 노티 생성 버튼 클릭됨")
+                    isPresentingCreationView = true
                 } label: {
                     Label {
                         Text("노티 생성하기")
@@ -68,6 +71,9 @@ struct NottieListView: View {
                             .fontWeight(.semibold)
                     }
                 }
+            }
+            .sheet(isPresented: $isPresentingCreationView){
+                NottieCreationView()
             }
         }
     }
