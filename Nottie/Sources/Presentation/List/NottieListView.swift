@@ -7,62 +7,65 @@
 
 import SwiftUI
 
+import SwiftUI
+
 struct NottieListView: View {
     @StateObject var viewModel: NottieListViewModel
     @State private var isPresentingCreationView = false
     
     var body: some View {
-        NavigationStack{
-            VStack{
-                //노티 리스트
-                List {
-                    ForEach(viewModel.nottieSections, id: \.date) { section in
-                        Section(header: Text(section.date)) {
-                            ForEach(section.notties, id: \.id) { nottie in
-                                Text(nottie.content)
-                            }
-                            .onDelete { offsets in
-                                let items = section.notties
-                                offsets.forEach { idx in
-                                    viewModel.delete(nottie: items[idx])
+        NavigationStack {
+            VStack {
+                if viewModel.nottieSections.isEmpty {
+                    // 비어있는 경우 Placeholder
+                    Spacer()
+                    Text("아직 노티가 없어요")
+                        .foregroundStyle(.secondary)
+                    Spacer()
+                } else {
+                    List {
+                        ForEach(viewModel.nottieSections, id: \.date) { section in
+                            Section(header: Text(section.date)) {
+                                ForEach(section.notties, id: \.id) { nottie in
+                                    Text(nottie.content)
+                                }
+                                .onDelete { offsets in
+                                    let items = section.notties
+                                    offsets.forEach { idx in
+                                        viewModel.delete(nottie: items[idx])
+                                    }
                                 }
                             }
                         }
                     }
+                    .listStyle(.insetGrouped)
+                    .background(Color(UIColor.systemGroupedBackground))
                 }
-                .listStyle(.insetGrouped)
                 
-                //생성하기 버튼
                 Button {
-                    print("탭: 노티 생성 버튼 클릭됨")
                     isPresentingCreationView = true
                 } label: {
-                    Label {
-                        Text("노티 생성하기")
-                    } icon: {
-                        Image(systemName: "pencil")
-                    }
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(Color.blue)
-                    .cornerRadius(12)
-                    .padding(.horizontal)
+                    Label("노티 생성하기", systemImage: "pencil")
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color.blue)
+                        .cornerRadius(12)
+                        .padding(.horizontal)
                 }
+                .padding(.bottom)
             }
             .background(Color(UIColor.systemGroupedBackground))
-            .navigationTitle(Text("노티"))
+            .navigationTitle("노티")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button{
+                    Button("선택") {
                         print("탭: 선택버튼")
-                    } label: {
-                        Text("선택")
-                            .fontWeight(.semibold)
                     }
+                    .fontWeight(.semibold)
                 }
             }
-            .sheet(isPresented: $isPresentingCreationView){
+            .sheet(isPresented: $isPresentingCreationView) {
                 NottieCreationView()
             }
         }
