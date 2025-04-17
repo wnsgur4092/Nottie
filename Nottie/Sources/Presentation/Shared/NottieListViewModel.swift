@@ -14,6 +14,7 @@ final class NottieListViewModel: ObservableObject{
     
     init(repository: NottieRepositoryProtocol){
         self.repository = repository
+        load()
     }
     
     //MARK: 데이터 불러오기
