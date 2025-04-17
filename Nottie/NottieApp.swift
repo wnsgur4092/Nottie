@@ -5,7 +5,7 @@ import SwiftData
 struct NottieApp: App {
     var body: some Scene {
         WindowGroup {
-            NottieListView()
+            NottieListView(viewModel: NottieListViewModel(repository: MockNottieRepository()))
                 .modelContainer(for: Nottie.self)
         }
     }
