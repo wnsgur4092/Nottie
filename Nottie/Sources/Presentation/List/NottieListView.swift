@@ -29,7 +29,16 @@ struct NottieListView: View {
                             Section(header: Text(section.date)) {
                                 ForEach(0..<section.notties.count, id: \.self) { rowIndex in
                                     let nottie = section.notties[rowIndex]
-                                    Text(nottie.content)
+                                    HStack{
+                                        Text(nottie.content)
+                                        
+                                        Spacer()
+                                        
+                                        if let reminderTime = nottie.reminderTime {
+                                            Image(systemName: "bell.fill")
+                                                .foregroundStyle(.yellow)
+                                        }
+                                    }
                                 }
                                 .onDelete { offsets in
                                     offsets.forEach { idx in
