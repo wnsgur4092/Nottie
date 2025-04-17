@@ -16,6 +16,7 @@ final class NottieListViewModel: ObservableObject{
         self.repository = repository
     }
     
+    //MARK: 데이터 불러오기
     func load() {
         let all = repository.fetchAll()
         
@@ -29,6 +30,13 @@ final class NottieListViewModel: ObservableObject{
             .map { (date: $0.key, notties: $0.value) }
     }
     
+    //MARK: 데이터 저장하기
+    func save(content: String, isReminderOn: Bool, reminderTime: Date?){
+        repository.save(content: content, isReminderOn: isReminderOn, reminderTime: reminderTime)
+        load()
+    }
+    
+    //MARK: 데이터 삭제하기
     func delete(nottie: Nottie){
         repository.delete(nottie)
         load()
