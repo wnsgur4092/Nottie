@@ -7,32 +7,34 @@
 
 import SwiftUI
 
-import SwiftUI
-
 struct NottieListView: View {
     @StateObject var viewModel: NottieListViewModel
     @State private var isPresentingCreationView = false
-    
+
     var body: some View {
-        NavigationStack {
+        NavigationView {
             VStack {
                 if viewModel.nottieSections.isEmpty {
-                    // 비어있는 경우 Placeholder
                     Spacer()
                     Text("아직 노티가 없어요")
                         .foregroundStyle(.secondary)
                     Spacer()
                 } else {
+                    let sections = viewModel.nottieSections
+
                     List {
-                        ForEach(viewModel.nottieSections, id: \.date) { section in
+                        ForEach(0..<sections.count, id: \.self) { sectionIndex in
+                            let section = sections[sectionIndex]
+
                             Section(header: Text(section.date)) {
-                                ForEach(section.notties, id: \.id) { nottie in
+                                ForEach(0..<section.notties.count, id: \.self) { rowIndex in
+                                    let nottie = section.notties[rowIndex]
                                     Text(nottie.content)
                                 }
                                 .onDelete { offsets in
-                                    let items = section.notties
                                     offsets.forEach { idx in
-                                        viewModel.delete(nottie: items[idx])
+                                        let nottie = section.notties[idx]
+                                        viewModel.delete(nottie: nottie)
                                     }
                                 }
                             }
@@ -41,7 +43,7 @@ struct NottieListView: View {
                     .listStyle(.insetGrouped)
                     .background(Color(UIColor.systemGroupedBackground))
                 }
-                
+
                 Button {
                     isPresentingCreationView = true
                 } label: {
@@ -66,12 +68,14 @@ struct NottieListView: View {
                 }
             }
             .sheet(isPresented: $isPresentingCreationView) {
-                NottieCreationView()
+                NottieCreationView(viewModel: viewModel)
             }
         }
     }
 }
 
 #Preview {
-    NottieListView(viewModel: NottieListViewModel(repository: MockNottieRepository()))
+    let mockRepository = MockNottieRepository()
+    let mockViewModel = NottieListViewModel(repository: mockRepository)
+    NottieListView(viewModel: mockViewModel)
 }
