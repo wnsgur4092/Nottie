@@ -20,7 +20,7 @@ struct NottieListView: View {
             ForEach(sections, id: \.date) { section in
                 Section(header: Text(section.date)) {
                     ForEach(section.notties, id: \.id) { nottie in
-                        HStack {
+                        HStack(alignment: .center) {
                             if isSelectionModeActive {
                                 let isSelected = selectedNottieIDs.contains(nottie.id)
                                 Image(systemName: isSelected ? "circle.fill" : "circle.dotted")
@@ -32,11 +32,22 @@ struct NottieListView: View {
                             Text(nottie.content)
                             Spacer()
                             
-                            if nottie.reminderTime != nil {
-                                Image(systemName: "bell.fill")
-                                    .foregroundStyle(.yellow)
+                            VStack{
+                                if nottie.reminderTime != nil
+                                {
+                                    Image(systemName: "bell.fill")
+                                        .foregroundStyle(.yellow)
+                                    
+                                    VStack{
+                                        Text("\(nottie.reminderTime!.formatted(date: .omitted, time: .shortened))")
+                                        Text("재알림")
+                                    }
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                }
                             }
                         }
+                        .padding(.vertical, 8)
                         .contentShape(Rectangle())
                         .onTapGesture {
                             guard isSelectionModeActive else { return }
@@ -90,7 +101,7 @@ struct NottieListView: View {
                         selectedNottieIDs.removeAll()
                         isSelectionModeActive = false
                     } label: {
-                        Label("노티 재알림", systemImage: "arrow.up")
+                        Label("노티 다시보내기", systemImage: "arrow.up")
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding()
