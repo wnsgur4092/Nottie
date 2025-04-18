@@ -41,7 +41,7 @@ final class NottieListViewModel: ObservableObject{
             id: UUID(),
             date: Date(),
             type: "time",
-            title: "📝 새로운 노티",
+            title: "새로운 노티!",
             body: content
         )
 
@@ -51,7 +51,7 @@ final class NottieListViewModel: ObservableObject{
                 id: newNottie.id,
                 date: reminderTime,
                 type: "date",
-                title: "🔔 노티 재알림",
+                title: "노티 리마인더!!",
                 body: content
             )
         }

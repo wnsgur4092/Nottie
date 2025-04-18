@@ -33,7 +33,7 @@ struct NottieListView: View {
                                 
                             Spacer()
                             
-                            VStack{
+                            VStack(spacing: 4){
                                 if nottie.reminderTime != nil
                                 {
                                     Image(systemName: "bell.fill")
@@ -41,7 +41,6 @@ struct NottieListView: View {
                                     
                                     VStack{
                                         Text("\(nottie.reminderTime!.formatted(date: .omitted, time: .shortened))")
-                                        Text("재알림")
                                     }
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
@@ -120,7 +119,7 @@ struct NottieListView: View {
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color.blue)
+                            .background(Color.yellow)
                             .cornerRadius(12)
                             .padding(.horizontal)
                     }
@@ -137,7 +136,8 @@ struct NottieListView: View {
                             selectedNottieIDs.removeAll()
                         }
                     }
-                    .fontWeight(.semibold)
+                    .foregroundColor(.yellow)
+                    .fontWeight(.bold)
                 }
             }
             .sheet(isPresented: $isPresentingCreationView) {
