@@ -25,9 +25,10 @@ final class MockNottieRepository: NottieRepositoryProtocol {
         return notties
     }
 
-    func save(content: String, isReminderOn: Bool, reminderTime: Date?) {
+    func save(content: String, isReminderOn: Bool, reminderTime: Date?) -> Nottie {
         let new = Nottie(content: content, isReminderOn: isReminderOn, reminderTime: reminderTime)
         notties.append(new)
+        return new
     }
 
     func delete(_ nottie: Nottie) {

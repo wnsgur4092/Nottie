@@ -40,8 +40,15 @@ class NotificationHandler: NSObject, UIApplicationDelegate, UNUserNotificationCe
         completionHandler([.banner, .list, .sound, .badge])
     }
 
-    // 즉시 or 예약 알림 전송 (time 또는 date 기반)
-    func sendNotification(date: Date, type: String, timeInterval: Double = 1, title: String, body: String) {
+    /// 즉시 또는 예약 알림 전송
+    func sendNotification(
+        id: UUID,
+        date: Date,
+        type: String,
+        timeInterval: Double = 1,
+        title: String,
+        body: String
+    ) {
         var trigger: UNNotificationTrigger?
 
         if type == "date" {
@@ -60,19 +67,17 @@ class NotificationHandler: NSObject, UIApplicationDelegate, UNUserNotificationCe
         content.sound = UNNotificationSound.default
 
         let request = UNNotificationRequest(
-            identifier: UUID().uuidString,
+            identifier: id.uuidString,  // ✅ 고정된 ID로 예약
             content: content,
             trigger: trigger
         )
 
         UNUserNotificationCenter.current().add(request)
     }
-    
-    
+
+    /// 예약된 알림 취소
     func cancelNotification(for id: UUID) {
         UNUserNotificationCenter.current()
             .removePendingNotificationRequests(withIdentifiers: [id.uuidString])
     }
-    
-
 }

@@ -10,14 +10,13 @@ import SwiftData
 
 @Model
 final class Nottie {
-    var id: UUID
+    @Attribute(.unique) var id : UUID = UUID()
     var content: String
     var createdAt: Date
     var isReminderOn: Bool
     var reminderTime: Date?
 
     init(content: String, isReminderOn: Bool = false, reminderTime: Date? = nil, createdAt: Date = .now) {
-        self.id = UUID()
         self.content = content
         self.isReminderOn = isReminderOn
         self.reminderTime = reminderTime
