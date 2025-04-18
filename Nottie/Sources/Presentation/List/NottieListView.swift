@@ -101,14 +101,15 @@ struct NottieListView: View {
                         selectedNottieIDs.removeAll()
                         isSelectionModeActive = false
                     } label: {
-                        Label("노티 다시보내기", systemImage: "arrow.up")
+                        Label("노티 다시 보내기", systemImage: "arrow.up")
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color.orange)
+                            .background(selectedNottieIDs.isEmpty ? Color.secondary : Color.orange)
                             .cornerRadius(12)
                             .padding(.horizontal)
                     }
+                    .disabled(selectedNottieIDs.isEmpty)
                     .padding(.bottom)
                 } else {
                     Button {
@@ -129,7 +130,7 @@ struct NottieListView: View {
             .navigationTitle("노티")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button(isSelectionModeActive ? "취소 (\(selectedNottieIDs.count))" : "선택") {
+                    Button(isSelectionModeActive ? "취소" : "선택") {
                         withAnimation {
                             isSelectionModeActive.toggle()
                             selectedNottieIDs.removeAll()
