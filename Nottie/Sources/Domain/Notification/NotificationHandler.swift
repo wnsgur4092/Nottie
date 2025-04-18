@@ -16,6 +16,7 @@ class NotificationHandler: NSObject, UIApplicationDelegate, UNUserNotificationCe
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         let notificationCenter = UNUserNotificationCenter.current()
         notificationCenter.delegate = self
+        requestAuthorization()
         return true
     }
 
@@ -54,5 +55,16 @@ class NotificationHandler: NSObject, UIApplicationDelegate, UNUserNotificationCe
         )
 
         UNUserNotificationCenter.current().add(request)
+    }
+    
+    func requestAuthorization() {
+        let center = UNUserNotificationCenter.current()
+        center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+            if let error = error {
+                print("🔴 알림 권한 요청 실패: \(error.localizedDescription)")
+            } else {
+                print(granted ? "✅ 알림 권한 허용됨" : "❌ 알림 권한 거부됨")
+            }
+        }
     }
 }
