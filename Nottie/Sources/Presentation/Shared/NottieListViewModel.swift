@@ -34,6 +34,15 @@ final class NottieListViewModel: ObservableObject{
     //MARK: 데이터 저장하기
     func save(content: String, isReminderOn: Bool, reminderTime: Date?){
         repository.save(content: content, isReminderOn: isReminderOn, reminderTime: reminderTime)
+        
+        let handler = NotificationHandler()
+        handler.sendNotification(
+            date: Date(),
+            type: "time",
+            title: "📝 새로운 노티가 저장되었습니다",
+            body: content
+        )
+        
         load()
     }
     
