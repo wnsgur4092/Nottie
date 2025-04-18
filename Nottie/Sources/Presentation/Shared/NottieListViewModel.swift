@@ -46,8 +46,12 @@ final class NottieListViewModel: ObservableObject{
     }
     
     //MARK: 데이터 삭제하기
-    func delete(nottie: Nottie){
+    func delete(nottie: Nottie) {
         repository.delete(nottie)
-        load()
+
+        nottieSections = nottieSections.compactMap { section in
+            let filtered = section.notties.filter { $0.id != nottie.id }
+            return filtered.isEmpty ? nil : (date: section.date, notties: filtered)
+        }
     }
 }

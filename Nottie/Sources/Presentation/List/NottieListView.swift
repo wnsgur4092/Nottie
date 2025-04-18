@@ -12,17 +12,14 @@ struct NottieListView: View {
     @State private var isPresentingCreationView = false
     @State private var isSelectionModeActive = false
     @State private var selectedNottieIDs: Set<UUID> = []
-
+    
     private var nottieListSection: some View {
         let sections = viewModel.nottieSections
-
+        
         return List {
-            ForEach(0..<sections.count, id: \.self) { sectionIndex in
-                let section = sections[sectionIndex]
-
+            ForEach(sections, id: \.date) { section in
                 Section(header: Text(section.date)) {
-                    ForEach(0..<section.notties.count, id: \.self) { rowIndex in
-                        let nottie = section.notties[rowIndex]
+                    ForEach(section.notties, id: \.id) { nottie in
                         HStack {
                             if isSelectionModeActive {
                                 let isSelected = selectedNottieIDs.contains(nottie.id)
@@ -31,21 +28,21 @@ struct NottieListView: View {
                                     .transition(.move(edge: .leading).combined(with: .opacity))
                                     .animation(.easeInOut(duration: 0.25), value: isSelectionModeActive)
                             }
-
+                            
                             Text(nottie.content)
                             Spacer()
-
+                            
                             if nottie.reminderTime != nil {
                                 Image(systemName: "bell.fill")
                                     .foregroundStyle(.yellow)
                             }
                         }
-                        .contentShape(Rectangle()) // 전체 HStack 클릭 가능하게
+                        .contentShape(Rectangle())
                         .onTapGesture {
                             guard isSelectionModeActive else { return }
                             let generator = UIImpactFeedbackGenerator(style: .medium)
                             generator.impactOccurred()
-
+                            
                             withAnimation {
                                 if selectedNottieIDs.contains(nottie.id) {
                                     selectedNottieIDs.remove(nottie.id)
@@ -55,19 +52,21 @@ struct NottieListView: View {
                             }
                         }
                     }
-                    .onDelete { offsets in
-                        offsets.forEach { idx in
-                            let nottie = section.notties[idx]
-                            viewModel.delete(nottie: nottie)
+                    .onDelete(perform: { offsets in
+                        withAnimation {
+                            for offset in offsets {
+                                let nottie = section.notties[offset]
+                                viewModel.delete(nottie: nottie)
+                            }
                         }
-                    }
+                    })
                 }
             }
         }
         .listStyle(.insetGrouped)
         .background(Color(UIColor.systemGroupedBackground))
     }
-
+    
     var body: some View {
         NavigationView {
             VStack {
@@ -79,7 +78,7 @@ struct NottieListView: View {
                 } else {
                     nottieListSection
                 }
-
+                
                 if isSelectionModeActive {
                     Button {
                         let handler = NotificationHandler()
@@ -119,7 +118,7 @@ struct NottieListView: View {
             .navigationTitle("노티")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button(isSelectionModeActive ? "취소" : "선택") {
+                    Button(isSelectionModeActive ? "취소 (\(selectedNottieIDs.count))" : "선택") {
                         withAnimation {
                             isSelectionModeActive.toggle()
                             selectedNottieIDs.removeAll()

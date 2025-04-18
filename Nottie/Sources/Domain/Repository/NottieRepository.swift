@@ -9,6 +9,7 @@ import Foundation
 import SwiftData
 
 final class NottieRepository: NottieRepositoryProtocol {
+    
     private let context: ModelContext
     
     init(context: ModelContext){
