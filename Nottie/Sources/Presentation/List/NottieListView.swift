@@ -25,11 +25,12 @@ struct NottieListView: View {
                                 let isSelected = selectedNottieIDs.contains(nottie.id)
                                 Image(systemName: isSelected ? "circle.fill" : "circle.dotted")
                                     .foregroundStyle(isSelected ? .orange : .primary)
-                                    .transition(.move(edge: .leading).combined(with: .opacity))
-                                    .animation(.easeInOut(duration: 0.25), value: isSelectionModeActive)
+                                    .opacity(isSelectionModeActive ? 1 : 0)
+                                    .animation(.easeInOut(duration: 0.2), value: isSelectionModeActive)
                             }
                             
                             Text(nottie.content)
+                                
                             Spacer()
                             
                             VStack{
