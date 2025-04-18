@@ -10,7 +10,7 @@ import SwiftData
 
 final class NottieRepository: NottieRepositoryProtocol {
     
-    private let context: ModelContext
+    private var context: ModelContext
     
     init(context: ModelContext){
         self.context = context
