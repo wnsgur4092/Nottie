@@ -70,17 +70,17 @@ struct NottieCreationView: View {
                 
                 ToolbarItem(placement: .confirmationAction) {
                     Button("저장") {
-                        viewModel.save(
+                        viewModel.saveWithNotification(
                             content: text,
                             isReminderOn: isReminderOn,
                             reminderTime: isReminderOn ? reminderTime : nil
                         )
+                        
                         dismiss()
                     }
                 }
             }
             .task {
-                // 시트 열릴 때 자동으로 키보드 올리기
                 isTextEditorFocused = true
             }
         }
