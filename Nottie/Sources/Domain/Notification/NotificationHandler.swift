@@ -19,6 +19,17 @@ class NotificationHandler: NSObject, UIApplicationDelegate, UNUserNotificationCe
         requestAuthorization()
         return true
     }
+    
+    func requestAuthorization() {
+        let center = UNUserNotificationCenter.current()
+        center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+            if let error = error {
+                print("🔴 알림 권한 요청 실패: \(error.localizedDescription)")
+            } else {
+                print(granted ? "✅ 알림 권한 허용됨" : "❌ 알림 권한 거부됨")
+            }
+        }
+    }
 
     // 포그라운드 상태에서도 알림을 화면에 띄우도록 설정
     func userNotificationCenter(
@@ -57,14 +68,11 @@ class NotificationHandler: NSObject, UIApplicationDelegate, UNUserNotificationCe
         UNUserNotificationCenter.current().add(request)
     }
     
-    func requestAuthorization() {
-        let center = UNUserNotificationCenter.current()
-        center.requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-            if let error = error {
-                print("🔴 알림 권한 요청 실패: \(error.localizedDescription)")
-            } else {
-                print(granted ? "✅ 알림 권한 허용됨" : "❌ 알림 권한 거부됨")
-            }
-        }
+    
+    func cancelNotification(for id: UUID) {
+        UNUserNotificationCenter.current()
+            .removePendingNotificationRequests(withIdentifiers: [id.uuidString])
     }
+    
+
 }
