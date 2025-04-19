@@ -59,7 +59,7 @@ struct OnboardingView: View {
     }
     
     private func onboardingBullet(icon: String, title: String, description: String, color: Color) -> some View {
-        HStack(alignment: .top, spacing: 12) {
+        HStack(alignment: .center, spacing: 12) {
             Image(systemName: icon)
                 .foregroundColor(color)
                 .font(.system(size: 33))
