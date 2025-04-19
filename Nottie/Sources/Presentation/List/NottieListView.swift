@@ -117,7 +117,7 @@ struct NottieListView: View {
                         isPresentingCreationView = true
                     } label: {
                         Label("노티 생성하기", systemImage: "pencil")
-                            .fontWeight(.bold)
+                            .fontWeight(.black)
                             .foregroundColor(Color.primaryTextColor)
                             .frame(maxWidth: .infinity)
                             .padding()

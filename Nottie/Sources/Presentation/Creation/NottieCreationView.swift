@@ -81,6 +81,7 @@ struct NottieCreationView: View {
                     Button("취소") {
                         dismiss()
                     }
+                    .foregroundColor(.primaryColor)
                 }
                 
                 ToolbarItem(placement: .confirmationAction) {
@@ -90,9 +91,9 @@ struct NottieCreationView: View {
                             isReminderOn: isReminderOn,
                             reminderTime: isReminderOn ? reminderTime : nil
                         )
-                        
                         dismiss()
                     }
+                    .foregroundColor(.primaryColor)
                 }
             }
             .task {
