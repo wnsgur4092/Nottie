@@ -24,7 +24,7 @@ struct NottieListView: View {
                             if isSelectionModeActive {
                                 let isSelected = selectedNottieIDs.contains(nottie.id)
                                 Image(systemName: isSelected ? "circle.fill" : "circle.dotted")
-                                    .foregroundStyle(isSelected ? .orange : .primary)
+                                    .foregroundStyle(isSelected ? Color("primaryColor") : .primary)
                                     .opacity(isSelectionModeActive ? 1 : 0)
                                     .animation(.easeInOut(duration: 0.2), value: isSelectionModeActive)
                             }
@@ -37,7 +37,7 @@ struct NottieListView: View {
                                 if nottie.reminderTime != nil
                                 {
                                     Image(systemName: "bell.fill")
-                                        .foregroundStyle(.yellow)
+                                        .foregroundStyle(Color("priamryColor"))
                                     
                                     VStack{
                                         Text("\(nottie.reminderTime!.formatted(date: .omitted, time: .shortened))")
@@ -105,7 +105,7 @@ struct NottieListView: View {
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(selectedNottieIDs.isEmpty ? Color.secondary : Color.orange)
+                            .background(selectedNottieIDs.isEmpty ? Color.secondary : Color("primaryColor"))
                             .cornerRadius(12)
                             .padding(.horizontal)
                     }
@@ -119,7 +119,7 @@ struct NottieListView: View {
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color.yellow)
+                            .background(Color("primaryColor"))
                             .cornerRadius(12)
                             .padding(.horizontal)
                     }
@@ -136,7 +136,7 @@ struct NottieListView: View {
                             selectedNottieIDs.removeAll()
                         }
                     }
-                    .foregroundColor(.yellow)
+                    .foregroundColor(Color("primaryColor"))
                     .fontWeight(.bold)
                 }
             }
