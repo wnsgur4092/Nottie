@@ -9,6 +9,9 @@ import SwiftUI
 
 struct OnboardingView: View {
     @StateObject var viewModel = OnboardingViewModel(notificationService: NotificationHandler())
+    @AppStorage("hasSeenOnboarding") var hasSeenOnboarding: Bool = false
+    @State private var isShowingListView = false
+    @Binding var isPresented: Bool
     
     var body: some View {
         VStack(spacing: 40){
@@ -43,6 +46,8 @@ struct OnboardingView: View {
             
             Button {
                 viewModel.requestNotificationPermission()
+                hasSeenOnboarding = true
+                isPresented = false
             } label: {
                 Text("계속")
                     .fontWeight(.semibold)
@@ -72,5 +77,5 @@ struct OnboardingView: View {
 }
 
 #Preview {
-    OnboardingView()
+    OnboardingView(isPresented: .constant(true))
 }
