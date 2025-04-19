@@ -34,10 +34,25 @@ struct NottieCreationView: View {
                             TextEditor(text: $text)
                                 .frame(height: 120)
                                 .focused($isTextEditorFocused)
+                                .onChange(of: text) { newValue in
+                                    let font = UIFont.preferredFont(forTextStyle: .body)
+                                    let textView = UITextView()
+                                    textView.font = font
+                                    textView.text = newValue
+
+                                    let lineHeight = font.lineHeight
+                                    let fittingSize = CGSize(width: UIScreen.main.bounds.width - 40, height: .greatestFiniteMagnitude)
+                                    let size = textView.sizeThatFits(fittingSize)
+                                    let numberOfLines = Int(size.height / lineHeight)
+
+                                    if numberOfLines > 4 || newValue.count > 80 {
+                                        text = String(newValue.prefix(80))
+                                    }
+                                }
                             
                             HStack {
                                 Spacer()
-                                Text("\(text.count)/100")
+                                Text("\(text.count)/80")
                                     .font(.caption2)
                                     .foregroundStyle(.secondary)
                             }
