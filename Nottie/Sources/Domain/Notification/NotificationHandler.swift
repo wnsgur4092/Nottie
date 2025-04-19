@@ -9,14 +9,14 @@ import Foundation
 import UserNotifications
 import UIKit
 
-class NotificationHandler: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate {
+class NotificationHandler: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate, NotificationServiceProtocol {
     
     // 앱 실행 시 알림 delegate 등록
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         let notificationCenter = UNUserNotificationCenter.current()
         notificationCenter.delegate = self
-        requestAuthorization()
+//        requestAuthorization()
         return true
     }
     

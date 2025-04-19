@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct NottieListView: View {
-    @StateObject var viewModel: NottieListViewModel
+    @ObservedObject var viewModel: NottieListViewModel
     @State private var isPresentingCreationView = false
     @State private var isSelectionModeActive = false
     @State private var selectedNottieIDs: Set<UUID> = []

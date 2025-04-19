@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct OnboardingView: View {
+    @StateObject var viewModel = OnboardingViewModel(notificationService: NotificationHandler())
+    
     var body: some View {
         VStack(spacing: 40){
             Text("Nottie 시작하기")
@@ -40,7 +42,7 @@ struct OnboardingView: View {
             Spacer()
             
             Button {
-                print("ㅇㅇㅇㅇㅇㅇ")
+                viewModel.requestNotificationPermission()
             } label: {
                 Text("계속")
                     .fontWeight(.semibold)

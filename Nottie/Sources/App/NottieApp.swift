@@ -10,8 +10,9 @@ struct NottieApp: App {
         let context = modelContainer.mainContext
         
         WindowGroup {
-            NottieListView(viewModel: NottieListViewModel(repository: NottieRepository(context: context)))
-                .modelContainer(modelContainer)
+            OnboardingView(viewModel: OnboardingViewModel(notificationService: NotificationHandler()))
+//            NottieListView(viewModel: NottieListViewModel(repository: NottieRepository(context: context)))
+//                .modelContainer(modelContainer)
         }
     }
 }
