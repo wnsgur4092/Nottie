@@ -37,7 +37,7 @@ struct NottieListView: View {
                                 if nottie.reminderTime != nil
                                 {
                                     Image(systemName: "bell.fill")
-                                        .foregroundStyle(Color("priamryColor"))
+                                        .foregroundStyle(Color("primaryColor"))
                                     
                                     VStack{
                                         Text("\(nottie.reminderTime!.formatted(date: .omitted, time: .shortened))")
@@ -105,7 +105,7 @@ struct NottieListView: View {
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(selectedNottieIDs.isEmpty ? Color.secondary : Color("primaryColor"))
+                            .background(selectedNottieIDs.isEmpty ? Color("disabledColor") : Color("primaryColor"))
                             .cornerRadius(12)
                             .padding(.horizontal)
                     }
