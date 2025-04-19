@@ -24,7 +24,7 @@ struct NottieListView: View {
                             if isSelectionModeActive {
                                 let isSelected = selectedNottieIDs.contains(nottie.id)
                                 Image(systemName: isSelected ? "circle.fill" : "circle.dotted")
-                                    .foregroundStyle(isSelected ? Color("primaryColor") : .primary)
+                                    .foregroundStyle(isSelected ? Color.primaryColor : .primary)
                                     .opacity(isSelectionModeActive ? 1 : 0)
                                     .animation(.easeInOut(duration: 0.2), value: isSelectionModeActive)
                             }
@@ -37,7 +37,7 @@ struct NottieListView: View {
                                 if nottie.reminderTime != nil
                                 {
                                     Image(systemName: "bell.fill")
-                                        .foregroundStyle(Color("primaryColor"))
+                                        .foregroundStyle(Color.primaryColor)
                                     
                                     VStack{
                                         Text("\(nottie.reminderTime!.formatted(date: .omitted, time: .shortened))")
@@ -102,10 +102,11 @@ struct NottieListView: View {
                         isSelectionModeActive = false
                     } label: {
                         Label("노티 다시 보내기", systemImage: "arrow.up")
-                            .foregroundColor(.white)
+                            .fontWeight(.bold)
+                            .foregroundColor(selectedNottieIDs.isEmpty ? Color.disabledTextColor : Color.primaryTextColor)
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(selectedNottieIDs.isEmpty ? Color("disabledColor") : Color("primaryColor"))
+                            .background(selectedNottieIDs.isEmpty ? Color.disabledColor : Color.primaryColor)
                             .cornerRadius(12)
                             .padding(.horizontal)
                     }
@@ -116,10 +117,11 @@ struct NottieListView: View {
                         isPresentingCreationView = true
                     } label: {
                         Label("노티 생성하기", systemImage: "pencil")
-                            .foregroundColor(.white)
+                            .fontWeight(.bold)
+                            .foregroundColor(Color.primaryTextColor)
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color("primaryColor"))
+                            .background(Color.primaryColor)
                             .cornerRadius(12)
                             .padding(.horizontal)
                     }
@@ -127,7 +129,7 @@ struct NottieListView: View {
                 }
             }
             .background(Color(UIColor.systemGroupedBackground))
-            .navigationTitle("노티")
+            .navigationTitle("Nottie")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(isSelectionModeActive ? "취소" : "선택") {
@@ -136,7 +138,7 @@ struct NottieListView: View {
                             selectedNottieIDs.removeAll()
                         }
                     }
-                    .foregroundColor(Color("primaryColor"))
+                    .foregroundColor(Color.primaryColor)
                     .fontWeight(.bold)
                 }
             }
