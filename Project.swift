@@ -7,7 +7,7 @@ let project = Project(
             name: "Nottie",
             destinations: .iOS,
             product: .app,
-            bundleId: "io.tuist.Nottie",
+            bundleId: "com.outlook.Nottie",
             infoPlist: .extendingDefault(
                 with: [
                     "UILaunchScreen": [
