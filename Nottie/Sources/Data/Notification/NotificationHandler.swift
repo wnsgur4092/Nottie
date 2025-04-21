@@ -42,7 +42,7 @@ class NotificationHandler: NSObject, UNUserNotificationCenterDelegate, Notificat
 
         switch trigger {
         case .date:
-            triggerNotification = UNCalendarNotificationTrigger(dateMatching: createDateComponents(from: date), repeats: false)
+            triggerNotification = UNCalendarNotificationTrigger(dateMatching: date.toNotificationDateComponents(), repeats: false)
         case .time:
             triggerNotification = UNTimeIntervalNotificationTrigger(timeInterval: timeInterval, repeats: false)
         }
@@ -65,7 +65,4 @@ class NotificationHandler: NSObject, UNUserNotificationCenterDelegate, Notificat
         notificationCenter.removePendingNotificationRequests(withIdentifiers: [id.uuidString])
     }
 
-    private func createDateComponents(from date: Date) -> DateComponents {
-        Calendar.current.dateComponents([.day, .month, .year, .hour, .minute], from: date)
-    }
 }
