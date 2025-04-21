@@ -9,16 +9,24 @@ import Foundation
 import SwiftData
 
 final class NottieRepository: NottieRepositoryProtocol {
-    private var context: ModelContext
+    private let context: ModelContext
     
     init(context: ModelContext){
         self.context = context
     }
     
-    func save(content: String, isReminderOn: Bool, reminderTime: Date?) -> Nottie {
+    private func saveContext() {
+        do {
+            try context.save()
+        } catch {
+            print("🔴 저장 실패: \(error.localizedDescription)")
+        }
+    }
+    
+    func saveNottie(content: String, isReminderOn: Bool, reminderTime: Date?) -> Nottie {
         let newNottie = Nottie(content: content, isReminderOn: isReminderOn, reminderTime: reminderTime)
         context.insert(newNottie)
-        try? context.save()
+        saveContext()
         return newNottie
     }
 
@@ -27,11 +35,8 @@ final class NottieRepository: NottieRepositoryProtocol {
         return (try? context.fetch(descriptor)) ?? []
     }
     
-    
-    func delete(_ nottie: Nottie) {
+    func deleteNottie(_ nottie: Nottie) {
         context.delete(nottie)
-        try? context.save()
+        saveContext()
     }
-    
-    
 }

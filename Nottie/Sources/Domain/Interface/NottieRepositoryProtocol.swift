@@ -9,6 +9,6 @@ import Foundation
 
 protocol NottieRepositoryProtocol {
     func fetchNotties() -> [Nottie]
-    func save(content: String, isReminderOn: Bool, reminderTime: Date?) -> Nottie
-    func delete(_ nottie: Nottie)
+    func saveNottie(content: String, isReminderOn: Bool, reminderTime: Date?) -> Nottie
+    func deleteNottie(_ nottie: Nottie)
 }

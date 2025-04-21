@@ -33,7 +33,7 @@ final class NottieListViewModel: ObservableObject{
     
     //MARK: 데이터 저장하기
     func saveWithNotification(content: String, isReminderOn: Bool, reminderTime: Date?) {
-        let newNottie: Nottie = repository.save(content: content, isReminderOn: isReminderOn, reminderTime: reminderTime)
+        let newNottie: Nottie = repository.saveNottie(content: content, isReminderOn: isReminderOn, reminderTime: reminderTime)
         let handler = NotificationHandler()
 
         // ✅ 즉시 알림은 고유 UUID로 발송 (삭제와 무관하게 발송)
@@ -63,7 +63,7 @@ final class NottieListViewModel: ObservableObject{
         let handler = NotificationHandler()
         handler.cancelNotification(for: nottie.id)
         
-        repository.delete(nottie)
+        repository.deleteNottie(nottie)
 
         nottieSections = nottieSections.compactMap { section in
             let filtered = section.notties.filter { $0.id != nottie.id }
