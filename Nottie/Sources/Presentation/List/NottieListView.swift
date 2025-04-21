@@ -171,7 +171,8 @@ struct NottieListView: View {
                         }
                     }
                     .padding()
-                    .foregroundColor(.white)
+                    .fontWeight(.bold)
+                    .foregroundColor(.primaryTextColor)
                     .background(Color.primaryColor)
                     .cornerRadius(10)
                     Spacer()
