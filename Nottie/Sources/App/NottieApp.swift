@@ -3,7 +3,7 @@ import SwiftData
 
 @main
 struct NottieApp: App {
-    @UIApplicationDelegateAdaptor(NotificationHandler.self) var appDelegate
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @AppStorage("hasSeenOnboarding") var hasSeenOnboarding: Bool = false
     @State private var showOnboarding = false
     

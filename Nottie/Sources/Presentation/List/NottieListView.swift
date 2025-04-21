@@ -100,7 +100,7 @@ struct NottieListView: View {
                                 let handler = NotificationHandler()
                                 for id in selectedNottieIDs {
                                     if let nottie = viewModel.nottieSections.flatMap(\.notties).first(where: { $0.id == id }) {
-                                        handler.sendNotification(id: nottie.id, date: Date(), type: "time", title: "🔔 재알림", body: nottie.content)
+                                        handler.sendNotification(id: nottie.id, date: Date(), trigger: .time, title: "🔔 재알림", body: nottie.content)
                                     }
                                 }
                                 selectedNottieIDs.removeAll()

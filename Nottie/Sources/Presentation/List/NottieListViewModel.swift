@@ -40,7 +40,7 @@ final class NottieListViewModel: ObservableObject{
         handler.sendNotification(
             id: UUID(),
             date: Date(),
-            type: "time",
+            trigger: .time,
             title: "새로운 노티!",
             body: content
         )
@@ -50,7 +50,7 @@ final class NottieListViewModel: ObservableObject{
             handler.sendNotification(
                 id: newNottie.id,
                 date: reminderTime,
-                type: "date",
+                trigger: .date,
                 title: "노티 리마인더!!",
                 body: content
             )
