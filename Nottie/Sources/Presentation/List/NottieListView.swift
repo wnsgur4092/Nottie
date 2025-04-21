@@ -6,12 +6,15 @@
 //
 
 import SwiftUI
+import UserNotifications
 
 struct NottieListView: View {
     @ObservedObject var viewModel: NottieListViewModel
     @State private var isPresentingCreationView = false
     @State private var isSelectionModeActive = false
     @State private var selectedNottieIDs: Set<UUID> = []
+    @State private var isNotificationAuthorized: Bool = true
+    @Environment(\.scenePhase) private var scenePhase
     
     private var nottieListSection: some View {
         let sections = viewModel.nottieSections
@@ -47,7 +50,7 @@ struct NottieListView: View {
                                 }
                             }
                         }
-                        .padding(.vertical, 8)
+                        .padding(.vertical, 4)
                         .contentShape(Rectangle())
                         .onTapGesture {
                             guard isSelectionModeActive else { return }
@@ -79,71 +82,110 @@ struct NottieListView: View {
     }
     
     var body: some View {
-        NavigationView {
-            VStack {
-                if viewModel.nottieSections.isEmpty {
-                    Spacer()
-                    Text("아직 노티가 없어요")
-                        .foregroundStyle(.secondary)
-                    Spacer()
-                } else {
-                    nottieListSection
-                }
-                
-                if isSelectionModeActive {
-                    Button {
-                        let handler = NotificationHandler()
-                        for id in selectedNottieIDs {
-                            if let nottie = viewModel.nottieSections.flatMap(\.notties).first(where: { $0.id == id }) {
-                                handler.sendNotification(id: nottie.id, date: Date(), type: "time", title: "🔔 재알림", body: nottie.content)
+        Group {
+            if isNotificationAuthorized {
+                NavigationView {
+                    VStack {
+                        if viewModel.nottieSections.isEmpty {
+                            Spacer()
+                            Text("아직 노티가 없어요")
+                                .foregroundStyle(.secondary)
+                            Spacer()
+                        } else {
+                            nottieListSection
+                        }
+                        
+                        if isSelectionModeActive {
+                            Button {
+                                let handler = NotificationHandler()
+                                for id in selectedNottieIDs {
+                                    if let nottie = viewModel.nottieSections.flatMap(\.notties).first(where: { $0.id == id }) {
+                                        handler.sendNotification(id: nottie.id, date: Date(), type: "time", title: "🔔 재알림", body: nottie.content)
+                                    }
+                                }
+                                selectedNottieIDs.removeAll()
+                                isSelectionModeActive = false
+                            } label: {
+                                Label("노티 다시 보내기", systemImage: "arrow.up")
+                                    .fontWeight(.bold)
+                                    .foregroundColor(selectedNottieIDs.isEmpty ? Color.disabledTextColor : Color.primaryTextColor)
+                                    .frame(maxWidth: .infinity)
+                                    .padding()
+                                    .background(selectedNottieIDs.isEmpty ? Color.disabledColor : Color.primaryColor)
+                                    .cornerRadius(12)
+                                    .padding(.horizontal)
                             }
+                            .disabled(selectedNottieIDs.isEmpty)
+                            .padding(.bottom)
+                        } else {
+                            Button {
+                                isPresentingCreationView = true
+                            } label: {
+                                Label("노티 생성하기", systemImage: "pencil")
+                                    .fontWeight(.black)
+                                    .foregroundColor(Color.primaryTextColor)
+                                    .frame(maxWidth: .infinity)
+                                    .padding()
+                                    .background(Color.primaryColor)
+                                    .cornerRadius(12)
+                                    .padding(.horizontal)
+                            }
+                            .padding(.bottom)
                         }
-                        selectedNottieIDs.removeAll()
-                        isSelectionModeActive = false
-                    } label: {
-                        Label("노티 다시 보내기", systemImage: "arrow.up")
+                    }
+                    .background(Color(UIColor.systemGroupedBackground))
+                    .navigationTitle("Nottie")
+                    .toolbar {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button(isSelectionModeActive ? "취소" : "선택") {
+                                withAnimation {
+                                    isSelectionModeActive.toggle()
+                                    selectedNottieIDs.removeAll()
+                                }
+                            }
+                            .foregroundColor(Color.primaryColor)
                             .fontWeight(.bold)
-                            .foregroundColor(selectedNottieIDs.isEmpty ? Color.disabledTextColor : Color.primaryTextColor)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(selectedNottieIDs.isEmpty ? Color.disabledColor : Color.primaryColor)
-                            .cornerRadius(12)
-                            .padding(.horizontal)
-                    }
-                    .disabled(selectedNottieIDs.isEmpty)
-                    .padding(.bottom)
-                } else {
-                    Button {
-                        isPresentingCreationView = true
-                    } label: {
-                        Label("노티 생성하기", systemImage: "pencil")
-                            .fontWeight(.black)
-                            .foregroundColor(Color.primaryTextColor)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.primaryColor)
-                            .cornerRadius(12)
-                            .padding(.horizontal)
-                    }
-                    .padding(.bottom)
-                }
-            }
-            .background(Color(UIColor.systemGroupedBackground))
-            .navigationTitle("Nottie")
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(isSelectionModeActive ? "취소" : "선택") {
-                        withAnimation {
-                            isSelectionModeActive.toggle()
-                            selectedNottieIDs.removeAll()
                         }
                     }
-                    .foregroundColor(Color.primaryColor)
-                    .fontWeight(.bold)
+                    .sheet(isPresented: $isPresentingCreationView) {
+                        NottieCreationView(viewModel: viewModel)
+                    }
                 }
+            } else {
+                VStack(spacing: 20) {
+                    Spacer()
+                    Image(systemName: "bell.slash")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 64, height: 64)
+                        .foregroundColor(.secondary)
+                    Text("알림 권한이 꺼져있어요")
+                        .font(.headline)
+                    Text("알림을 사용하려면 설정에서 권한을 허용해 주세요.")
+                        .font(.subheadline)
+                        .multilineTextAlignment(.center)
+                        .foregroundColor(.secondary)
+                    Button("설정으로 이동") {
+                        if let url = URL(string: UIApplication.openSettingsURLString) {
+                            UIApplication.shared.open(url)
+                        }
+                    }
+                    .padding()
+                    .foregroundColor(.white)
+                    .background(Color.primaryColor)
+                    .cornerRadius(10)
+                    Spacer()
+                }
+                .padding()
             }
-            .sheet(isPresented: $isPresentingCreationView) {
-                NottieCreationView(viewModel: viewModel)
+        }
+        .onChange(of: scenePhase) { newPhase in
+            if newPhase == .active {
+                UNUserNotificationCenter.current().getNotificationSettings { settings in
+                    DispatchQueue.main.async {
+                        isNotificationAuthorized = settings.authorizationStatus == .authorized
+                    }
+                }
             }
         }
     }
