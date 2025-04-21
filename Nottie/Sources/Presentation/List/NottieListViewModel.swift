@@ -19,7 +19,7 @@ final class NottieListViewModel: ObservableObject{
     
     //MARK: 데이터 불러오기
     func load() {
-        let all = repository.fetchAll()
+        let all = repository.fetchNotties()
         
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"

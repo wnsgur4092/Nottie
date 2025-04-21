@@ -21,7 +21,7 @@ final class MockNottieRepository: NottieRepositoryProtocol {
         Nottie(content: "🥥 30일 전 메시지", createdAt: Calendar.current.date(byAdding: .day, value: -30, to: .now)!)
     ]
     
-    func fetchAll() -> [Nottie] {
+    func fetchNotties() -> [Nottie] {
         return notties
     }
 
