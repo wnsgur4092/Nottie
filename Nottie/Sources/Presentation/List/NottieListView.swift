@@ -20,14 +20,9 @@ struct NottieListView: View {
     private var nottieListSection: some View {
         let sections = viewModel.nottieSections
 
-        return ScrollView {
-            LazyVStack(alignment: .leading, spacing: 0) {
-                ForEach(sections, id: \.date) { section in
-                    Text(section.date)
-                        .font(.headline)
-                        .padding(.horizontal)
-                        .padding(.top)
-
+        return List {
+            ForEach(sections, id: \.date) { section in
+                Section(header: Text(section.date).font(.headline)) {
                     ForEach(section.notties, id: \.id) { nottie in
                         HStack(alignment: .center) {
                             if isSelectionModeActive {
@@ -52,11 +47,6 @@ struct NottieListView: View {
                                 }
                             }
                         }
-                        .padding()
-                        .background(Color(UIColor.secondarySystemGroupedBackground))
-                        .cornerRadius(8)
-                        .padding(.horizontal)
-                        .padding(.vertical, 4)
                         .contentShape(Rectangle())
                         .onTapGesture {
                             guard isSelectionModeActive else { return }
@@ -72,10 +62,16 @@ struct NottieListView: View {
                             }
                         }
                     }
+                    .onDelete { indexSet in
+                        indexSet.forEach { idx in
+                            let nottie = section.notties[idx]
+                            viewModel.delete(nottie: nottie)
+                        }
+                    }
                 }
             }
-            .padding(.bottom, 8)
         }
+        .listStyle(.insetGrouped)
         .background(Color(UIColor.systemGroupedBackground))
     }
     
