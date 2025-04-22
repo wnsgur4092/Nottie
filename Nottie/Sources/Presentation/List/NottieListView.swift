@@ -14,49 +14,45 @@ struct NottieListView: View {
     @State private var isSelectionModeActive = false
     @State private var selectedNottieIDs: Set<UUID> = []
     @State private var isNotificationAuthorized: Bool = true
+    @State private var showNotificationWarning: Bool = false
     @Environment(\.scenePhase) private var scenePhase
     
     private var nottieListSection: some View {
         let sections = viewModel.nottieSections
-        
+
         return List {
             ForEach(sections, id: \.date) { section in
-                Section(header: Text(section.date)) {
+                Section(header: Text(section.date).font(.headline)) {
                     ForEach(section.notties, id: \.id) { nottie in
                         HStack(alignment: .center) {
                             if isSelectionModeActive {
                                 let isSelected = selectedNottieIDs.contains(nottie.id)
                                 Image(systemName: isSelected ? "circle.fill" : "circle.dotted")
                                     .foregroundStyle(isSelected ? Color.primaryColor : .primary)
-                                    .opacity(isSelectionModeActive ? 1 : 0)
-                                    .animation(.easeInOut(duration: 0.2), value: isSelectionModeActive)
+                                    .padding(.trailing, 4)
                             }
-                            
+
                             Text(nottie.content)
-                                
+
                             Spacer()
-                            
-                            VStack(spacing: 4){
-                                if nottie.reminderTime != nil
-                                {
+
+                            if let reminderTime = nottie.reminderTime {
+                                VStack(spacing: 4) {
                                     Image(systemName: "bell.fill")
                                         .foregroundStyle(Color.primaryColor)
-                                    
-                                    VStack{
-                                        Text("\(nottie.reminderTime!.formatted(date: .omitted, time: .shortened))")
-                                    }
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
+
+                                    Text("\(reminderTime.formatted(date: .omitted, time: .shortened))")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
                                 }
                             }
                         }
-                        .padding(.vertical, 4)
                         .contentShape(Rectangle())
                         .onTapGesture {
                             guard isSelectionModeActive else { return }
                             let generator = UIImpactFeedbackGenerator(style: .medium)
                             generator.impactOccurred()
-                            
+
                             withAnimation {
                                 if selectedNottieIDs.contains(nottie.id) {
                                     selectedNottieIDs.remove(nottie.id)
@@ -66,14 +62,12 @@ struct NottieListView: View {
                             }
                         }
                     }
-                    .onDelete(perform: { offsets in
-                        withAnimation {
-                            for offset in offsets {
-                                let nottie = section.notties[offset]
-                                viewModel.delete(nottie: nottie)
-                            }
+                    .onDelete { indexSet in
+                        indexSet.forEach { idx in
+                            let nottie = section.notties[idx]
+                            viewModel.delete(nottie: nottie)
                         }
-                    })
+                    }
                 }
             }
         }
@@ -84,7 +78,61 @@ struct NottieListView: View {
     var body: some View {
         Group {
             if isNotificationAuthorized {
-                NavigationView {
+                VStack(spacing: 0) {
+                    HStack(alignment: .center) {
+                        Text("Nottie")
+                            .font(.largeTitle.bold())
+                        Spacer()
+                        Button(isSelectionModeActive ? "취소" : "선택") {
+                            withAnimation {
+                                isSelectionModeActive.toggle()
+                                selectedNottieIDs.removeAll()
+                            }
+                        }
+                        .foregroundColor(Color.primaryColor)
+                        .fontWeight(.bold)
+                    }
+                    .padding()
+                    .background(Color(UIColor.systemGroupedBackground))
+
+                    if showNotificationWarning {
+                        HStack(spacing: 12) {
+                            Image(systemName: "bell.slash")
+                                .foregroundColor(.primaryTextColor)
+
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("알림 권한이 꺼져 있어요")
+                                    .font(.headline)
+                                    .foregroundColor(.primaryTextColor)
+                                Text("설정에서 알림 권한을 허용해 주세요.")
+                                    .font(.caption)
+                                    .foregroundColor(.primaryTextColor)
+                            }
+
+                            Spacer()
+
+                            Button("설정") {
+                                if let url = URL(string: UIApplication.openSettingsURLString) {
+                                    UIApplication.shared.open(url)
+                                }
+                            }
+                            .fontWeight(.bold)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 8)
+                            .background(Color.primaryColor)
+                            .foregroundColor(.primaryTextColor)
+                            .cornerRadius(8)
+                        }
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 12)
+                                .fill(Color.white.opacity(0.9))
+                                .shadow(color: Color.black.opacity(0.15), radius: 4, x: 0, y: 1)
+                        )
+                        .padding(.horizontal)
+                        .zIndex(1)
+                    }
+
                     VStack {
                         if viewModel.nottieSections.isEmpty {
                             Spacer()
@@ -94,13 +142,13 @@ struct NottieListView: View {
                         } else {
                             nottieListSection
                         }
-                        
+
                         if isSelectionModeActive {
                             Button {
                                 let handler = NotificationHandler()
                                 for id in selectedNottieIDs {
                                     if let nottie = viewModel.nottieSections.flatMap(\.notties).first(where: { $0.id == id }) {
-                                        handler.sendNotification(id: nottie.id, date: Date(), type: "time", title: "🔔 재알림", body: nottie.content)
+                                        handler.sendNotification(id: nottie.id, date: Date(), trigger: .time, title: "🔔 재알림", body: nottie.content)
                                     }
                                 }
                                 selectedNottieIDs.removeAll()
@@ -134,22 +182,10 @@ struct NottieListView: View {
                         }
                     }
                     .background(Color(UIColor.systemGroupedBackground))
-                    .navigationTitle("Nottie")
-                    .toolbar {
-                        ToolbarItem(placement: .topBarTrailing) {
-                            Button(isSelectionModeActive ? "취소" : "선택") {
-                                withAnimation {
-                                    isSelectionModeActive.toggle()
-                                    selectedNottieIDs.removeAll()
-                                }
-                            }
-                            .foregroundColor(Color.primaryColor)
-                            .fontWeight(.bold)
-                        }
-                    }
-                    .sheet(isPresented: $isPresentingCreationView) {
-                        NottieCreationView(viewModel: viewModel)
-                    }
+                }
+                .background(Color(UIColor.systemGroupedBackground))
+                .sheet(isPresented: $isPresentingCreationView) {
+                    NottieCreationView(viewModel: viewModel)
                 }
             } else {
                 VStack(spacing: 20) {
@@ -180,11 +216,18 @@ struct NottieListView: View {
                 .padding()
             }
         }
+        .onAppear {
+            UNUserNotificationCenter.current().getNotificationSettings { settings in
+                DispatchQueue.main.async {
+                    showNotificationWarning = settings.authorizationStatus != .authorized
+                }
+            }
+        }
         .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {
                 UNUserNotificationCenter.current().getNotificationSettings { settings in
                     DispatchQueue.main.async {
-                        isNotificationAuthorized = settings.authorizationStatus == .authorized
+                        showNotificationWarning = settings.authorizationStatus != .authorized
                     }
                 }
             }
