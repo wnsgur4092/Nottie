@@ -20,13 +20,6 @@ struct NottieCreationView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                // 배경 탭 시 키보드 내리기
-                Color.clear
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        isTextEditorFocused = false
-                    }
-                
                 Form {
                     // TextEditor Section
                     Section {
@@ -73,6 +66,11 @@ struct NottieCreationView: View {
                         Text("재알림이 필요하신가요?")
                     }
                 }
+                .simultaneousGesture(
+                    TapGesture().onEnded {
+                        isTextEditorFocused = false
+                    }
+                )
             }
             .navigationTitle("노티 생성하기")
             .navigationBarTitleDisplayMode(.inline)
